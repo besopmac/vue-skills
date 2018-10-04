@@ -4,11 +4,18 @@
             
             <form @submit.prevent="addSkill">
                 <input type="text" placeholder="Enter a new skill you have..." v-model="skill" v-validate="'min: 5'" name="skill">
-                <p class="alert" v-if="errors.has('skill')">{{ errors.first('skill') }}</p>
+                
+                <transition name="alert-in" enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
+                    <p class="alert" v-if="errors.has('skill')">{{ errors.first('skill') }}</p>
+                </transition>
             </form>
 
             <ul>
-                <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
+                <transition-group name="list" enter-active-class="animated bounceInUp" leave-active-class="animated bounceOutDown">
+                    <li v-for="(data, index) in skills" :key="index">{{ data.skill }}
+                        <i class="fa fa-minus-circle" @click="remove(index)"></i>
+                    </li>
+                </transition-group>
             </ul>
 
             <p>These are the skills that you possess.</p>
@@ -39,13 +46,18 @@
                         console.log('Not valid');
                     }
                 })
-                
+            },
+            remove(id) {
+                this.skills.splice(id, 1);
             }
         }
     }
 </script>
 
 <style scoped>
+    @import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"; 
+    @import 'https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css';
+
     .holder {
         background: #fff;
     }
@@ -65,6 +77,10 @@
         color: #3E5252;
     }
 
+    i {
+        float: right;
+    }
+
     p {
         text-align:center;
         padding: 30px 0;
@@ -76,11 +92,11 @@
     }
 
     input {
-        width: calc(100% - 40px);
         border: 0;
         padding: 20px;
         font-size: 1.3em;
         color: #687F7F;
+        width: calc(100% - 40px);
         background-color: #323333;
     }
 
@@ -90,5 +106,23 @@
         display: inline-block;
         padding: 5px;
         margin-top: -20px;
+    }
+    .alert-in-enter-active {
+        animation: bounce-in .5s;
+    }
+    .alert-in-leave-active {
+        animation: bounce-in .5s reverse;
+    }
+
+    @keyframes bounce-in {
+        0% {
+            transform: scale(0);
+        }
+        50% {
+            transform: scale(1.5);
+        }
+        100% {
+            transform: scale(1);
+        }
     }
 </style>
